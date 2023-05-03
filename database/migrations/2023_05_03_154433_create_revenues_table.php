@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('revenues', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
             $table->string('description');
             $table->decimal('value', 8, 2);
             $table->timestamp('datetime');
