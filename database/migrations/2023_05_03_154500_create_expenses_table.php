@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('description');
             $table->decimal('value', 8, 2);
-            $table->timestamp('paid_at');
+            $table->date('paid_at');
             $table->timestamps();
             $table->softDeletes();
         });
