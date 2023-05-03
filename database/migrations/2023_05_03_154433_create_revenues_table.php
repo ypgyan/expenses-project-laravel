@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('description');
             $table->decimal('value', 8, 2);
-            $table->timestamp('datetime');
+            $table->timestamp('received_at');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
