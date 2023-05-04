@@ -23,9 +23,9 @@ class RevenuesController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): void
     {
-        //
+        abort(501, 'Resource not implemented');
     }
 
     /**
@@ -47,7 +47,7 @@ class RevenuesController extends Controller
      */
     public function show(string $id)
     {
-        //
+        abort(501, 'Resource not implemented');
     }
 
     /**
@@ -55,7 +55,7 @@ class RevenuesController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        abort(501, 'Resource not implemented');
     }
 
     /**
@@ -63,6 +63,6 @@ class RevenuesController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        abort(501, 'Resource not implemented');
     }
 }
