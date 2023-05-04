@@ -18,7 +18,7 @@ class RevenueResource extends JsonResource
             "id" => $this->id,
             "description" => $this->description,
             "value" => $this->value,
-            "received_at" => $this->received_at,
+            "received_at" => $this->received_at->format('d-m-Y'),
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at
         ];
