@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Core;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Core\CreateRevenueRequest;
+use App\Http\Requests\Core\Revenues\CreateRevenueRequest;
 use App\Http\Resources\Core\Revenues\RevenueResource;
 use App\Services\Revenue\RevenuesService;
+use Bugsnag\BugsnagLaravel\Facades\Bugsnag;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -26,10 +28,18 @@ class RevenuesController extends Controller
         //
     }
 
+    /**
+     * @throws Exception
+     */
     public function store(CreateRevenueRequest $request): JsonResponse
     {
-        $revenue = $this->revenuesService->createRevenue($request->validated());
-        return response()->json(new RevenueResource($revenue));
+        try {
+            $revenue = $this->revenuesService->createRevenue($request->validated());
+            return response()->json(new RevenueResource($revenue));
+        } catch (Exception $e) {
+            Bugsnag::notifyException($e);
+            throw $e;
+        }
     }
 
     /**
