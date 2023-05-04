@@ -30,8 +30,8 @@ class CreateRevenueRequest extends FormRequest
                 'min:3'
             ],
             'value' => [
-              'required',
-              'gt:0'
+                'required',
+                'gt:0'
             ],
             'received_at' => [
                 'required',
@@ -44,7 +44,7 @@ class CreateRevenueRequest extends FormRequest
     {
         return [
             function (Validator $validator) {
-                if ($this->validateDuplicateDescriptionOnMonth($this->description)) {
+                if (isset($this->description) && $this->validateDuplicateDescriptionOnMonth($this->description)) {
                     $validator->errors()->add(
                         'description',
                         'Revenue already registered this month!'
@@ -56,15 +56,14 @@ class CreateRevenueRequest extends FormRequest
 
     private function validateDuplicateDescriptionOnMonth(string $description): bool
     {
-        $descriptionRepeated = Revenue::whereDate('received_at' , '>=', now()->firstOfMonth())
-            ->whereDate('received_at' , '<=', now()->lastOfMonth())
+        $descriptionRepeated = Revenue::whereDate('received_at', '>=', now()->firstOfMonth())
+            ->whereDate('received_at', '<=', now()->lastOfMonth())
             ->where('description', $description)
             ->count();
 
         if ($descriptionRepeated > 0) {
             return true;
         }
-
         return false;
     }
 }

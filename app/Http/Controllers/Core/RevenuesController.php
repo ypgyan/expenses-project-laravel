@@ -9,6 +9,7 @@ use App\Models\Revenue;
 use App\Services\Revenue\RevenuesService;
 use Bugsnag\BugsnagLaravel\Facades\Bugsnag;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -52,10 +53,19 @@ class RevenuesController extends Controller
 
     /**
      * Display the specified resource.
+     * @throws Exception
      */
-    public function show(string $id)
+    public function show(string $id): JsonResponse
     {
-        abort(501, 'Resource not implemented');
+        try {
+            $revenue = $this->revenuesService->getRevenue($id);
+            return response()->json(new RevenueResource($revenue));
+        } catch (ModelNotFoundException $e) {
+            throw new ModelNotFoundException('Revenue not found');
+        } catch (Exception $e) {
+            Bugsnag::notifyException($e);
+            throw $e;
+        }
     }
 
     /**

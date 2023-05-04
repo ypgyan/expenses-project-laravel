@@ -22,4 +22,9 @@ class RevenuesService
     {
         return Revenue::all();
     }
+
+    public function getRevenue(string $id)
+    {
+        return Revenue::findOrFail($id);
+    }
 }
