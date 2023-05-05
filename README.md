@@ -1,5 +1,5 @@
 # Alura Backend Challenge 04
-
+![workflow](https://github.com/ypgyan/expenses-project-laravel/actions/workflows/laravel.yml/badge.svg)
 ## Sobre o desafio
 A aplicação deve permitir que uma pessoa cadastre suas receitas e despesas do mês, bem como gerar um relatório mensal.
 
