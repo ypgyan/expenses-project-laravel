@@ -7,7 +7,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 
-class CreateRevenueRequest extends FormRequest
+class RevenueRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
