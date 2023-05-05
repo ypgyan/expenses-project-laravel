@@ -25,3 +25,14 @@ it('should fail if invalid id', function () {
     $this->get("api/revenues/0")
         ->assertStatus(404);
 });
+
+it('should delete a revenue', function () {
+    $createdRevenue = Revenue::factory()->create();
+    $this->delete("api/revenues/$createdRevenue->id")
+        ->assertStatus(200);
+});
+
+it('should fail to delete a revenue that does not exist', function () {
+    $this->delete("api/revenues/0")
+        ->assertStatus(404);
+});
