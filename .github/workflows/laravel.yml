@@ -32,6 +32,6 @@ jobs:
       env:
         DB_CONNECTION: sqlite
         DB_DATABASE: database/database.sqlite
-      run: php artisan migrate --connection sqlite
+      run: php artisan migrate --database sqlite
     - name: Execute tests (Unit and Feature tests) via PHPUnit
       run: vendor/bin/pest
