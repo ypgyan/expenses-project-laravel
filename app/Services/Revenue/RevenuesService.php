@@ -23,8 +23,14 @@ class RevenuesService
         return Revenue::all();
     }
 
-    public function getRevenue(string $id)
+    public function getRevenue(string $id): Revenue
     {
         return Revenue::findOrFail($id);
+    }
+
+    public function removeRevenue(string $id): void
+    {
+        $revenue = Revenue::findOrFail($id);
+        $revenue->delete();
     }
 }

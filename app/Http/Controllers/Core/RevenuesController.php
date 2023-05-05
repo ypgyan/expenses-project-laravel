@@ -78,9 +78,18 @@ class RevenuesController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     * @throws Exception
      */
-    public function destroy(string $id)
+    public function destroy(string $id): JsonResponse
     {
-        abort(501, 'Resource not implemented');
+        try {
+            $this->revenuesService->removeRevenue($id);
+            return response()->json(["message" => "Revenue $id deleted"], 200);
+        } catch (ModelNotFoundException $e) {
+            throw new ModelNotFoundException('Revenue not found');
+        } catch (Exception $e) {
+            Bugsnag::notifyException($e);
+            throw $e;
+        }
     }
 }
