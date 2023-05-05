@@ -37,6 +37,5 @@ jobs:
           cp .env.ci .env
           php artisan key:generate
           php artisan migrate
-          php artisan sanctum:install
       - name: Run Testsuite
         run: vendor/bin/pest
