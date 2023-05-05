@@ -37,7 +37,6 @@ jobs:
           cp .env.ci .env
           php artisan key:generate
           php artisan migrate
-          php artisan migrate --database testing
           php artisan passport:install
       - name: Run Testsuite
         run: vendor/bin/pest
