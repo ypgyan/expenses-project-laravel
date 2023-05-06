@@ -49,13 +49,13 @@ class UpdateRequest extends FormRequest
     {
         $revenueId = $this->route('revenue');
         $revenue = Revenue::find($revenueId);
-        $this->duplicatedDescription = true;
+        $checkDuplicated = true;
 
         if (!is_null($revenue) && $revenue->description == $this->description) {
-            $this->duplicatedDescription = false;
+            $checkDuplicated = false;
         }
 
-        if (isset($this->description) && $this->duplicatedDescription && $this->validateDuplicateDescriptionOnMonth($this->description)) {
+        if (isset($this->description) && $checkDuplicated && $this->validateDuplicateDescriptionOnMonth($this->description)) {
             $this->duplicatedDescription = true;
         }
 
@@ -78,7 +78,7 @@ class UpdateRequest extends FormRequest
             ->where('description', $description)
             ->count();
 
-        if ($descriptionRepeated > 0) {
+        if (!is_null($descriptionRepeated) && $descriptionRepeated > 0) {
             return true;
         }
         return false;
