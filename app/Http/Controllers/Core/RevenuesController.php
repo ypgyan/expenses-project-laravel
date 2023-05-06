@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Core;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Core\Revenues\CreateRevenueRequest;
+use App\Http\Requests\Core\Revenues\CreateRequest;
+use App\Http\Requests\Core\Revenues\UpdateRequest;
 use App\Http\Resources\Core\Revenues\RevenueResource;
 use App\Models\Revenue;
 use App\Services\Revenue\RevenuesService;
@@ -40,7 +41,7 @@ class RevenuesController extends Controller
     /**
      * @throws Exception
      */
-    public function store(CreateRevenueRequest $request): JsonResponse
+    public function store(CreateRequest $request): JsonResponse
     {
         try {
             $revenue = $this->revenuesService->createRevenue($request->validated());
@@ -70,10 +71,19 @@ class RevenuesController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * @throws Exception
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateRequest $request, string $id): JsonResponse
     {
-        abort(501, 'Resource not implemented');
+        try {
+            $revenue = $this->revenuesService->updateRevenue($request->validated(), $id);
+            return response()->json(new RevenueResource($revenue));
+        } catch (ModelNotFoundException $e) {
+            throw new ModelNotFoundException('Revenue not found');
+        } catch (Exception $e) {
+            Bugsnag::notifyException($e);
+            throw $e;
+        }
     }
 
     /**

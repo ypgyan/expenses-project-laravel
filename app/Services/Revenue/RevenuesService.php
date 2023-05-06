@@ -33,4 +33,14 @@ class RevenuesService
         $revenue = Revenue::findOrFail($id);
         $revenue->delete();
     }
+
+    public function updateRevenue(array $revenueData, string $id): Revenue
+    {
+        $revenue = Revenue::findOrFail($id);
+        $revenue->description = $revenueData['description'];
+        $revenue->value = $revenueData['value'];
+        $revenue->received_at = Carbon::createFromFormat('d-m-Y' , $revenueData['received_at'])->format('Y-m-d');
+        $revenue->save();
+        return $revenue;
+    }
 }
