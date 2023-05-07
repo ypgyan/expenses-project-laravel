@@ -13,7 +13,7 @@ class ExpensesService
         $expense = new Expense();
         $expense->description = $expenseData['description'];
         $expense->value = $expenseData['value'];
-        $expense->paid_at = Carbon::createFromFormat('d-m-Y' , $expenseData['received_at'])->format('Y-m-d');
+        $expense->paid_at = Carbon::createFromFormat('d-m-Y' , $expenseData['paid_at'])->format('Y-m-d');
         $expense->save();
         return $expense;
     }
@@ -39,7 +39,7 @@ class ExpensesService
         $expense = Expense::findOrFail($id);
         $expense->description = $expenseData['description'];
         $expense->value = $expenseData['value'];
-        $expense->received_at = Carbon::createFromFormat('d-m-Y' , $expenseData['received_at'])->format('Y-m-d');
+        $expense->paid_at = Carbon::createFromFormat('d-m-Y' , $expenseData['paid_at'])->format('Y-m-d');
         $expense->save();
         return $expense;
     }

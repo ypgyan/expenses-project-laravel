@@ -19,7 +19,7 @@ class ExpenseResource extends JsonResource
             "id" => $this->id,
             "description" => $this->description,
             "value" => $this->value,
-            "received_at" => Carbon::createFromFormat('Y-m-d', $this->paid_at)->format('d-m-Y'),
+            "paid_at" => Carbon::createFromFormat('Y-m-d', $this->paid_at)->format('d-m-Y'),
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at
         ];

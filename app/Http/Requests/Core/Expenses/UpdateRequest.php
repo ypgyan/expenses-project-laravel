@@ -73,8 +73,8 @@ class UpdateRequest extends FormRequest
 
     private function validateDuplicateDescriptionOnMonth(string $description): bool
     {
-        $descriptionRepeated = Expense::whereDate('received_at', '>=', now()->firstOfMonth())
-            ->whereDate('received_at', '<=', now()->lastOfMonth())
+        $descriptionRepeated = Expense::whereDate('paid_at', '>=', now()->firstOfMonth())
+            ->whereDate('paid_at', '<=', now()->lastOfMonth())
             ->where('description', $description)
             ->count();
 
