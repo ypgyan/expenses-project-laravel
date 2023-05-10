@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
 use App\Models\Revenue;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -21,6 +22,7 @@ class ExpenseFactory extends Factory
             'description' => fake()->text(),
             'value' => fake()->randomFloat(2, 0.1, 10000),
             'paid_at' => now()->format('Y-m-d'),
+            'category_id' => 8,
         ];
     }
 }
