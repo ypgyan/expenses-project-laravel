@@ -24,9 +24,9 @@ final class Categories extends Enum
     const EDUCACAO = 'Educação';
     const LAZER = 'Lazer';
     const IMPREVISTOS = 'Imprevistos';
-    const OUTROS = 'Outros';
+    const OUTRAS = 'Outras';
 
-    public static function getCategoryId(string $categoryName = self::OUTROS): int
+    public static function getCategoryId(string $categoryName = self::OUTRAS): int
     {
         return Category::where('name', $categoryName)->first()->id ?? 8;
     }
