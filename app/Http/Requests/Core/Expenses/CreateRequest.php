@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests\Core\Expenses;
 
+use App\Enums\Expenses\Categories;
 use App\Models\Expense;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
 class CreateRequest extends FormRequest
@@ -36,7 +38,11 @@ class CreateRequest extends FormRequest
             'paid_at' => [
                 'required',
                 'date_format:d-m-Y'
-            ]
+            ],
+            'category' => [
+                'sometimes',
+                Rule::in(Categories::getValues())
+            ],
         ];
     }
 

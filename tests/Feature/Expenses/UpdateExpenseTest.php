@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Expenses\Categories;
 use App\Models\Expense;
 use Illuminate\Testing\Fluent\AssertableJson;
 
@@ -12,6 +13,7 @@ it('should update a expense', function (array $body) {
         ->assertJson(fn(AssertableJson $json) => $json->where('description', $body['description'])
             ->where('value', $body['value'])
             ->where('paid_at', $body['paid_at'])
+            ->where('category', Categories::OUTRAS)
             ->etc()
         );
 })->with('expenseBody');
@@ -99,4 +101,19 @@ it('should fail to update a expense that does not exist', function (array $body)
     $body['description'] = fake()->text();
     $this->put("api/expenses/0", $body, ['Accept' => 'application/json'])
         ->assertStatus(404);
+})->with('expenseBody');
+
+it('test invalid category', function (array $body) {
+    $expense = Expense::factory()->create();
+    $body['category'] = 'Não registrado';
+    $this->put('/api/expenses/' . $expense->id, $body, ['Accept' => 'application/json'])
+        ->assertStatus(422)
+        ->assertExactJson([
+            "message" => "The selected category is invalid.",
+            "errors" => [
+                "category" => [
+                    "The selected category is invalid."
+                ],
+            ]
+        ]);
 })->with('expenseBody');

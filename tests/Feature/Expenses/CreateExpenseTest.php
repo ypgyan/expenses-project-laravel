@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Expenses\Categories;
 use App\Models\Expense;
 use Illuminate\Testing\Fluent\AssertableJson;
 
@@ -9,6 +10,7 @@ it('should create a expense', function (array $body) {
         ->assertJson(fn(AssertableJson $json) => $json->where('description', $body['description'])
             ->where('value', $body['value'])
             ->where('paid_at', $body['paid_at'])
+            ->where('category', Categories::OUTRAS)
             ->etc()
         );
 })->with('expenseBody');
@@ -72,6 +74,20 @@ it('test paid at date format', function (array $body) {
             "errors" => [
                 "paid_at" => [
                     "The paid at field must match the format d-m-Y."
+                ],
+            ]
+        ]);
+})->with('expenseBody');
+
+it('test invalid category', function (array $body) {
+    $body['category'] = 'Não registrado';
+    $this->post('/api/expenses', $body, ['Accept' => 'application/json'])
+        ->assertStatus(422)
+        ->assertExactJson([
+            "message" => "The selected category is invalid.",
+            "errors" => [
+                "category" => [
+                    "The selected category is invalid."
                 ],
             ]
         ]);
