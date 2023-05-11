@@ -13,14 +13,19 @@ class RevenuesService
         $revenue = new Revenue();
         $revenue->description = $revenueData['description'];
         $revenue->value = $revenueData['value'];
-        $revenue->received_at = Carbon::createFromFormat('d-m-Y' , $revenueData['received_at'])->format('Y-m-d');
+        $revenue->received_at = Carbon::createFromFormat('d-m-Y', $revenueData['received_at'])->format('Y-m-d');
         $revenue->save();
         return $revenue;
     }
 
-    public function getAll(): Collection
+    public function getRevenues(array $filters): Collection
     {
-        return Revenue::all();
+        if (empty($filters)) {
+            return Revenue::all();
+        } else {
+            return Revenue::where('description', 'like', "%{$filters['description']}%")
+                ->get();
+        }
     }
 
     public function getRevenue(string $id): Revenue
@@ -39,7 +44,7 @@ class RevenuesService
         $revenue = Revenue::findOrFail($id);
         $revenue->description = $revenueData['description'];
         $revenue->value = $revenueData['value'];
-        $revenue->received_at = Carbon::createFromFormat('d-m-Y' , $revenueData['received_at'])->format('Y-m-d');
+        $revenue->received_at = Carbon::createFromFormat('d-m-Y', $revenueData['received_at'])->format('Y-m-d');
         $revenue->save();
         return $revenue;
     }
