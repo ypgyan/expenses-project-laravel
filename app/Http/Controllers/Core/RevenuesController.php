@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Core;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Core\Revenues\CreateRequest;
+use App\Http\Requests\Core\Revenues\GetRevenuesRequest;
 use App\Http\Requests\Core\Revenues\UpdateRequest;
 use App\Http\Resources\Core\Revenues\RevenueResource;
 use App\Models\Revenue;
@@ -27,10 +28,10 @@ class RevenuesController extends Controller
      * Display a listing of the resource.
      * @throws Exception
      */
-    public function index(): JsonResponse
+    public function index(GetRevenuesRequest $request): JsonResponse
     {
         try {
-            $revenues = $this->revenuesService->getAll();
+            $revenues = $this->revenuesService->getRevenues($request->validated());
             return response()->json(RevenueResource::collection($revenues));
         } catch (Exception $e) {
             Bugsnag::notifyException($e);

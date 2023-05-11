@@ -36,3 +36,22 @@ it('should fail to delete a revenue that does not exist', function () {
     $this->delete("api/revenues/0")
         ->assertStatus(404);
 });
+
+it('should filter revenues', function () {
+    $revenue = Revenue::factory(5)->create()->first();
+    $this->json('GET', '/api/revenues', ['description' => $revenue->description], ['Accept' => 'application/json'])
+        ->assertStatus(200)
+        ->assertJson(fn(AssertableJson $json) => $json->has(1)->first(fn(Assertablejson $json) => $json->where('id', $revenue->id)
+            ->where('description', $revenue->description)
+            ->where('value', number_format($revenue->value, 2, '.', ''))
+            ->where('received_at', Carbon::createFromFormat('Y-m-d', $revenue->received_at)->format('d-m-Y'))
+            ->etc()
+        ));
+});
+
+it('should return any revenue', function () {
+    Revenue::factory(5)->create();
+    $this->json('GET', '/api/revenues', ['description' => 'Teste'], ['Accept' => 'application/json'])
+        ->assertStatus(200)
+        ->assertExactJson([]);
+});
