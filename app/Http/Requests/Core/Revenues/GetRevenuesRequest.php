@@ -25,7 +25,7 @@ class GetRevenuesRequest extends FormRequest
         return [
             'description' => [
                 'sometimes',
-                'alpha_num',
+                'string',
             ]
         ];
     }
