@@ -20,9 +20,14 @@ class ExpensesService
         return $expense;
     }
 
-    public function getAll(): Collection
+    public function getAll(array $filters): Collection
     {
-        return Expense::all();
+        if (empty($filters)) {
+            return Expense::all();
+        } else {
+            return Expense::where('description', 'like', "%{$filters['description']}%")
+                ->get();
+        }
     }
 
     public function getExpense(string $id): Expense
