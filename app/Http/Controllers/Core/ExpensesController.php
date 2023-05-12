@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Core;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Core\Expenses\CreateRequest;
+use App\Http\Requests\Core\Expenses\GetExpensesRequest;
 use App\Http\Requests\Core\Expenses\UpdateRequest;
 use App\Http\Resources\Core\Expenses\ExpenseResource;
 use App\Services\Expenses\ExpensesService;
@@ -26,10 +27,10 @@ class ExpensesController extends Controller
      * Display a listing of the resource.
      * @throws Exception
      */
-    public function index(): JsonResponse
+    public function index(GetExpensesRequest $request): JsonResponse
     {
         try {
-            $expenses = $this->expensesService->getAll();
+            $expenses = $this->expensesService->getAll($request->validated());
             return response()->json(ExpenseResource::collection($expenses));
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
