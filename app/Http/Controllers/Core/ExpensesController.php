@@ -112,8 +112,6 @@ class ExpensesController extends Controller
         try {
             $revenues = $this->expensesService->monthExtract($year, $month);
             return response()->json(ExpenseResource::collection($revenues), 200);
-        } catch (ModelNotFoundException $e) {
-            throw new ModelNotFoundException('Revenue not found');
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
             throw $e;
