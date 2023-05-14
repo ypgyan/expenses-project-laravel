@@ -103,4 +103,20 @@ class RevenuesController extends Controller
             throw $e;
         }
     }
+
+    /**
+     * @throws Exception
+     */
+    public function extract(string $year, string $month): JsonResponse
+    {
+        try {
+            $revenues = $this->revenuesService->monthExtract($year, $month);
+            return response()->json(RevenueResource::collection($revenues), 200);
+        } catch (ModelNotFoundException $e) {
+            throw new ModelNotFoundException('Revenue not found');
+        } catch (Exception $e) {
+            Bugsnag::notifyException($e);
+            throw $e;
+        }
+    }
 }

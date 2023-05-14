@@ -48,4 +48,12 @@ class RevenuesService
         $revenue->save();
         return $revenue;
     }
+
+    public function monthExtract(string $year, string $month): Collection
+    {
+        $dateOfMonth = Carbon::createFromFormat('d-m-Y', "01-{$month}-{$year}");
+        return Revenue::whereDate('received_at', '>=', $dateOfMonth->firstOfMonth())
+            ->whereDate('received_at', '<=', $dateOfMonth->lastOfMonth())
+            ->get();
+    }
 }
