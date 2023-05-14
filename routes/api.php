@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 Route::resource('revenues', RevenuesController::class);
 Route::get('revenues/extract/{year}/{month}', [RevenuesController::class, 'extract']);
 Route::resource('expenses', ExpensesController::class);
+Route::get('expenses/extract/{year}/{month}', [ExpensesController::class, 'extract']);
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });

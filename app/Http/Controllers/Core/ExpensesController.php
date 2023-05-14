@@ -7,6 +7,7 @@ use App\Http\Requests\Core\Expenses\CreateRequest;
 use App\Http\Requests\Core\Expenses\GetExpensesRequest;
 use App\Http\Requests\Core\Expenses\UpdateRequest;
 use App\Http\Resources\Core\Expenses\ExpenseResource;
+use App\Http\Resources\Core\Revenues\RevenueResource;
 use App\Services\Expenses\ExpensesService;
 use Bugsnag\BugsnagLaravel\Facades\Bugsnag;
 use Exception;
@@ -97,6 +98,22 @@ class ExpensesController extends Controller
             return response()->json(["message" => "Expenses $id deleted"], 200);
         } catch (ModelNotFoundException $e) {
             throw new ModelNotFoundException('Expenses not found');
+        } catch (Exception $e) {
+            Bugsnag::notifyException($e);
+            throw $e;
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function extract(string $year, string $month): JsonResponse
+    {
+        try {
+            $revenues = $this->expensesService->monthExtract($year, $month);
+            return response()->json(ExpenseResource::collection($revenues), 200);
+        } catch (ModelNotFoundException $e) {
+            throw new ModelNotFoundException('Revenue not found');
         } catch (Exception $e) {
             Bugsnag::notifyException($e);
             throw $e;
