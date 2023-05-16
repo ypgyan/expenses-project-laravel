@@ -4,8 +4,10 @@ namespace App\Http\Requests\Core\Expenses;
 
 use App\Enums\Expenses\Categories;
 use App\Models\Expense;
+use Exception;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
@@ -62,14 +64,19 @@ class CreateRequest extends FormRequest
 
     private function validateDuplicateDescriptionOnMonth(string $description): bool
     {
-        $descriptionRepeated = Expense::whereDate('paid_at', '>=', now()->firstOfMonth())
-            ->whereDate('paid_at', '<=', now()->lastOfMonth())
-            ->where('description', $description)
-            ->count();
+        try {
+            $verifyDate = Carbon::CreateFromFormat('d-m-Y', $this->paid_at);
+            $descriptionRepeated = Expense::whereDate('paid_at', '>=', $verifyDate->firstOfMonth())
+                ->whereDate('paid_at', '<=', $verifyDate->lastOfMonth())
+                ->where('description', $description)
+                ->count();
 
-        if ($descriptionRepeated > 0) {
-            return true;
+            if (!is_null($descriptionRepeated) && $descriptionRepeated > 0) {
+                return true;
+            }
+            return false;
+        } catch (Exception $e) {
+            return false;
         }
-        return false;
     }
 }

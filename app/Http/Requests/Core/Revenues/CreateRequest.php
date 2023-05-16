@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Core\Revenues;
 
 use App\Models\Revenue;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
@@ -56,14 +58,19 @@ class CreateRequest extends FormRequest
 
     private function validateDuplicateDescriptionOnMonth(string $description): bool
     {
-        $descriptionRepeated = Revenue::whereDate('received_at', '>=', now()->firstOfMonth())
-            ->whereDate('received_at', '<=', now()->lastOfMonth())
-            ->where('description', $description)
-            ->count();
+        try {
+            $verifyDate = Carbon::CreateFromFormat('d-m-Y', $this->received_at);
+            $descriptionRepeated = Revenue::whereDate('received_at', '>=', $verifyDate->firstOfMonth())
+                ->whereDate('received_at', '<=', $verifyDate->lastOfMonth())
+                ->where('description', $description)
+                ->count();
 
-        if ($descriptionRepeated > 0) {
-            return true;
+            if ($descriptionRepeated > 0) {
+                return true;
+            }
+            return false;
+        } catch (Exception $e) {
+            return false;
         }
-        return false;
     }
 }

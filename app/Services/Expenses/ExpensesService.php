@@ -51,4 +51,12 @@ class ExpensesService
         $expense->save();
         return $expense;
     }
+
+    public function monthExtract(string $year, string $month): Collection
+    {
+        $dateOfMonth = Carbon::createFromFormat('d-m-Y', "01-{$month}-{$year}");
+        return Expense::whereDate('paid_at', '>=', $dateOfMonth->firstOfMonth())
+            ->whereDate('paid_at', '<=', $dateOfMonth->lastOfMonth())
+            ->get();
+    }
 }
