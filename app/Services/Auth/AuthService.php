@@ -13,7 +13,7 @@ class AuthService
      */
     public function signIn(array $loginInfo): array
     {
-        $user = User::where('email', $loginInfo['email'])->first();
+        $user = User::where('email', $loginInfo['email'])->firstOrFail();
         if (Hash::check($loginInfo['password'], $user->password)) {
             $user->tokens()->delete();
             $token = $user->createToken("{$user->email}." . time());
