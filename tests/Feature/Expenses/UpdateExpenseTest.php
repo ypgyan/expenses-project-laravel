@@ -41,6 +41,7 @@ it('should fail all fields', function () {
 it('test duplicated description rule', function (array $body) {
     $expenseFirst = Expense::factory()->create([
         'description' => $body['description'],
+        'paid_at' => now()
     ]);
     $expense = Expense::factory()->create([
         'description' => fake()->text(),

@@ -37,8 +37,9 @@ it('should fail all fields', function () {
 });
 
 it('test duplicated description rule', function (array $body) {
-    $revenueFirst = Revenue::factory()->create([
+    Revenue::factory()->create([
         'description' => $body['description'],
+        'received_at' => now(),
     ]);
     $revenue = Revenue::factory()->create([
         'description' => fake()->text(),
