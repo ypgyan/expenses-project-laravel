@@ -35,6 +35,7 @@ it('should fail all fields', function () {
 it('test duplicated description rule', function (array $body) {
     Revenue::factory()->create([
         'description' => $body['description'],
+        'received_at' => now(),
     ]);
 
     $this->post('/api/revenues', $body, ['Accept' => 'application/json'])

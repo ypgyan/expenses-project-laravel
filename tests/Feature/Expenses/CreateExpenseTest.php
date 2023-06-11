@@ -37,6 +37,7 @@ it('should fail all fields', function () {
 it('test duplicated description rule', function (array $body) {
     Expense::factory()->create([
         'description' => $body['description'],
+        'paid_at' => now()
     ]);
 
     $this->post('/api/expenses', $body, ['Accept' => 'application/json'])
