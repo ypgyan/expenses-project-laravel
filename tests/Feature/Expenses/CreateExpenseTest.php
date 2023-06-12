@@ -2,10 +2,13 @@
 
 use App\Enums\Expenses\Categories;
 use App\Models\Expense;
+use App\Models\User;
 use Illuminate\Testing\Fluent\AssertableJson;
+use function Pest\Laravel\actingAs;
 
 it('should create a expense', function (array $body) {
-    $this->post('/api/expenses', $body)
+    $user = User::factory()->create();
+    actingAs($user)->post('/api/expenses', $body)
         ->assertStatus(200)
         ->assertJson(fn(AssertableJson $json) => $json->where('description', $body['description'])
             ->where('value', $body['value'])
@@ -16,7 +19,8 @@ it('should create a expense', function (array $body) {
 })->with('expenseBody');
 
 it('should fail all fields', function () {
-    $this->post('/api/expenses', [], ['Accept' => 'application/json'])
+    $user = User::factory()->create();
+    actingAs($user)->post('/api/expenses', [], ['Accept' => 'application/json'])
         ->assertStatus(422)
         ->assertExactJson([
             "message" => "The description field is required. (and 2 more errors)",
@@ -40,7 +44,8 @@ it('test duplicated description rule', function (array $body) {
         'paid_at' => now()
     ]);
 
-    $this->post('/api/expenses', $body, ['Accept' => 'application/json'])
+    $user = User::factory()->create();
+    actingAs($user)->post('/api/expenses', $body, ['Accept' => 'application/json'])
         ->assertStatus(422)
         ->assertExactJson([
             "message" => "Expense already registered this month!",
@@ -54,7 +59,8 @@ it('test duplicated description rule', function (array $body) {
 
 it('test value field greater than zero rule', function (array $body) {
     $body['value'] = 0;
-    $this->post('/api/expenses', $body, ['Accept' => 'application/json'])
+    $user = User::factory()->create();
+    actingAs($user)->post('/api/expenses', $body, ['Accept' => 'application/json'])
         ->assertStatus(422)
         ->assertExactJson([
             "message" => "The value field must be greater than 0.",
@@ -68,7 +74,8 @@ it('test value field greater than zero rule', function (array $body) {
 
 it('test paid at date format', function (array $body) {
     $body['paid_at'] = '03/10/1995';
-    $this->post('/api/expenses', $body, ['Accept' => 'application/json'])
+    $user = User::factory()->create();
+    actingAs($user)->post('/api/expenses', $body, ['Accept' => 'application/json'])
         ->assertStatus(422)
         ->assertExactJson([
             "message" => "The paid at field must match the format d-m-Y.",
@@ -82,7 +89,8 @@ it('test paid at date format', function (array $body) {
 
 it('test invalid category', function (array $body) {
     $body['category'] = 'Não registrado';
-    $this->post('/api/expenses', $body, ['Accept' => 'application/json'])
+    $user = User::factory()->create();
+    actingAs($user)->post('/api/expenses', $body, ['Accept' => 'application/json'])
         ->assertStatus(422)
         ->assertExactJson([
             "message" => "The selected category is invalid.",

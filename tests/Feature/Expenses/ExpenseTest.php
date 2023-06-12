@@ -1,17 +1,26 @@
 <?php
 
 use App\Models\Expense;
+use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Testing\Fluent\AssertableJson;
+use function Pest\Laravel\actingAs;
 
 it('has expenses page', function () {
-    $response = $this->get('/api/expenses');
+    $user = User::factory()->create();
+    $response = actingAs($user)->get('/api/expenses');
     $response->assertStatus(200);
 });
 
-it('should return a expense with valid paremeters', function () {
+it('should return unauthenticated', function () {
+    $response = $this->json('GET', '/api/expenses', [], ['Accept' => 'application/json']);
+    $response->assertStatus(401);
+});
+
+it('should return a expense with valid parameters', function () {
     $createdExpense = Expense::factory()->create();
-    $this->get("api/expenses/{$createdExpense->id}")
+    $user = User::factory()->create();
+    actingAs($user)->get("api/expenses/{$createdExpense->id}")
         ->assertStatus(200)
         ->assertJson(fn(AssertableJson $json) => $json->where('description', $createdExpense->description)
             ->where('id', $createdExpense->id)
@@ -22,24 +31,28 @@ it('should return a expense with valid paremeters', function () {
 });
 
 it('should fail if invalid id', function () {
-    $this->get("api/expenses/0")
+    $user = User::factory()->create();
+    actingAs($user)->get("api/expenses/0")
         ->assertStatus(404);
 });
 
 it('should delete a expense', function () {
     $createdExpense = Expense::factory()->create();
-    $this->delete("api/expenses/$createdExpense->id")
+    $user = User::factory()->create();
+    actingAs($user)->delete("api/expenses/$createdExpense->id")
         ->assertStatus(200);
 });
 
 it('should fail to delete a expense that does not exist', function () {
-    $this->delete("api/expenses/0")
+    $user = User::factory()->create();
+    actingAs($user)->delete("api/expenses/0")
         ->assertStatus(404);
 });
 
 it('should filter expenses', function () {
     $expense = Expense::factory(5)->create()->first();
-    $this->json('GET', '/api/expenses', ['description' => $expense->description], ['Accept' => 'application/json'])
+    $user = User::factory()->create();
+    actingAs($user)->json('GET', '/api/expenses', ['description' => $expense->description], ['Accept' => 'application/json'])
         ->assertStatus(200)
         ->assertJson(fn(AssertableJson $json) => $json->has(1)->first(fn(Assertablejson $json) => $json->where('id', $expense->id)
             ->where('description', $expense->description)
@@ -51,7 +64,8 @@ it('should filter expenses', function () {
 
 it('should return any expense', function () {
     Expense::factory(5)->create();
-    $this->json('GET', '/api/expenses', ['description' => 'Teste'], ['Accept' => 'application/json'])
+    $user = User::factory()->create();
+    actingAs($user)->json('GET', '/api/expenses', ['description' => 'Teste'], ['Accept' => 'application/json'])
         ->assertStatus(200)
         ->assertExactJson([]);
 });

@@ -1,13 +1,16 @@
 <?php
 
 use App\Models\Revenue;
+use App\Models\User;
 use Illuminate\Testing\Fluent\AssertableJson;
+use function Pest\Laravel\actingAs;
 
 it('should update a revenue', function (array $body) {
     $revenue = Revenue::factory()->create();
     $body['description'] = fake()->text();
 
-    $this->put('/api/revenues/' . $revenue->id, $body, ['Accept' => 'application/json'])
+    $user = User::factory()->create();
+    actingAs($user)->put('/api/revenues/' . $revenue->id, $body, ['Accept' => 'application/json'])
         ->assertStatus(200)
         ->assertJson(fn(AssertableJson $json) => $json->where('description', $body['description'])
             ->where('value', $body['value'])
@@ -18,7 +21,8 @@ it('should update a revenue', function (array $body) {
 
 it('should fail all fields', function () {
     $revenue = Revenue::factory()->create();
-    $this->put('/api/revenues/' . $revenue->id, [], ['Accept' => 'application/json'])
+    $user = User::factory()->create();
+    actingAs($user)->put('/api/revenues/' . $revenue->id, [], ['Accept' => 'application/json'])
         ->assertStatus(422)
         ->assertExactJson([
             "message" => "The description field is required. (and 2 more errors)",
@@ -45,7 +49,8 @@ it('test duplicated description rule', function (array $body) {
         'description' => fake()->text(),
     ]);
 
-    $this->put('/api/revenues/' . $revenue->id, $body, ['Accept' => 'application/json'])
+    $user = User::factory()->create();
+    actingAs($user)->put('/api/revenues/' . $revenue->id, $body, ['Accept' => 'application/json'])
         ->assertStatus(422)
         ->assertExactJson([
             "message" => "Revenue already registered this month!",
@@ -62,14 +67,16 @@ it('test duplicated description rule with updating same revenue', function (arra
         'description' => $body['description'],
     ]);
 
-    $this->put('/api/revenues/' . $revenue->id, $body, ['Accept' => 'application/json'])
+    $user = User::factory()->create();
+    actingAs($user)->put('/api/revenues/' . $revenue->id, $body, ['Accept' => 'application/json'])
         ->assertStatus(200);
 })->with('revenueBody');
 
 it('test value field greater than zero rule', function (array $body) {
     $revenue = Revenue::factory()->create();
     $body['value'] = 0;
-    $this->put('/api/revenues/' . $revenue->id, $body, ['Accept' => 'application/json'])
+    $user = User::factory()->create();
+    actingAs($user)->put('/api/revenues/' . $revenue->id, $body, ['Accept' => 'application/json'])
         ->assertStatus(422)
         ->assertExactJson([
             "message" => "The value field must be greater than 0.",
@@ -84,7 +91,8 @@ it('test value field greater than zero rule', function (array $body) {
 it('test received at date format', function (array $body) {
     $revenue = Revenue::factory()->create();
     $body['received_at'] = '03/10/1995';
-    $this->put('/api/revenues/' . $revenue->id, $body, ['Accept' => 'application/json'])
+    $user = User::factory()->create();
+    actingAs($user)->put('/api/revenues/' . $revenue->id, $body, ['Accept' => 'application/json'])
         ->assertStatus(422)
         ->assertExactJson([
             "message" => "The received at field must match the format d-m-Y.",
@@ -98,6 +106,7 @@ it('test received at date format', function (array $body) {
 
 it('should fail to update a revenue that does not exist', function (array $body) {
     $body['description'] = fake()->text();
-    $this->put("api/revenues/0", $body, ['Accept' => 'application/json'])
+    $user = User::factory()->create();
+    actingAs($user)->put("api/revenues/0", $body, ['Accept' => 'application/json'])
         ->assertStatus(404);
 })->with('revenueBody');

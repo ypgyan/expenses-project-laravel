@@ -1,17 +1,26 @@
 <?php
 
 use App\Models\Revenue;
+use App\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Testing\Fluent\AssertableJson;
+use function Pest\Laravel\actingAs;
 
 it('has revenues page', function () {
-    $response = $this->get('/api/revenues');
+    $user = User::factory()->create();
+    $response = actingAs($user)->get('/api/revenues');
     $response->assertStatus(200);
 });
 
-it('should return a revenue with valid paremeters', function () {
+it('should return unauthenticated revenues page', function () {
+    $response = $this->json('GET', '/api/revenues', [], ['Accept' => 'application/json']);
+    $response->assertStatus(401);
+});
+
+it('should return a revenue with valid parameters', function () {
     $createdRevenue = Revenue::factory()->create();
-    $this->get("api/revenues/{$createdRevenue->id}")
+   $user = User::factory()->create();
+    actingAs($user)->get("api/revenues/{$createdRevenue->id}")
         ->assertStatus(200)
         ->assertJson(fn(AssertableJson $json) => $json->where('description', $createdRevenue->description)
             ->where('id', $createdRevenue->id)
@@ -22,24 +31,28 @@ it('should return a revenue with valid paremeters', function () {
 });
 
 it('should fail if invalid id', function () {
-    $this->get("api/revenues/0")
+   $user = User::factory()->create();
+    actingAs($user)->get("api/revenues/0")
         ->assertStatus(404);
 });
 
 it('should delete a revenue', function () {
     $createdRevenue = Revenue::factory()->create();
-    $this->delete("api/revenues/$createdRevenue->id")
+   $user = User::factory()->create();
+    actingAs($user)->delete("api/revenues/$createdRevenue->id")
         ->assertStatus(200);
 });
 
 it('should fail to delete a revenue that does not exist', function () {
-    $this->delete("api/revenues/0")
+   $user = User::factory()->create();
+    actingAs($user)->delete("api/revenues/0")
         ->assertStatus(404);
 });
 
 it('should filter revenues', function () {
     $revenue = Revenue::factory(5)->create()->first();
-    $this->json('GET', '/api/revenues', ['description' => $revenue->description], ['Accept' => 'application/json'])
+   $user = User::factory()->create();
+    actingAs($user)->json('GET', '/api/revenues', ['description' => $revenue->description], ['Accept' => 'application/json'])
         ->assertStatus(200)
         ->assertJson(fn(AssertableJson $json) => $json->has(1)->first(fn(Assertablejson $json) => $json->where('id', $revenue->id)
             ->where('description', $revenue->description)
@@ -51,7 +64,8 @@ it('should filter revenues', function () {
 
 it('should return any revenue', function () {
     Revenue::factory(5)->create();
-    $this->json('GET', '/api/revenues', ['description' => 'Teste'], ['Accept' => 'application/json'])
+   $user = User::factory()->create();
+    actingAs($user)->json('GET', '/api/revenues', ['description' => 'Teste'], ['Accept' => 'application/json'])
         ->assertStatus(200)
         ->assertExactJson([]);
 });
